@@ -46,6 +46,8 @@ class Formatter(object):
 
     @staticmethod
     def get_formatter(story, hn_data, twitter_config):
+        if 'type' in hn_data and hn_data['type'] == 'job':
+            return JobURLFormatter(story, hn_data, twitter_config)
         if 'url' in hn_data:
             return URLFormatter(story, hn_data, twitter_config)
         return NonURLFormatter(story, hn_data, twitter_config)
@@ -73,6 +75,16 @@ class NonURLFormatter(Formatter):
     def __len__(self):
         post_length = len(self.make_post())
         urls_length = len(self.hn_url)
+        return post_length - urls_length + self.tco_length
+
+
+class JobURLFormatter(Formatter):
+    def make_post(self):
+        return "L: %s" % self.story_url
+
+    def __len__(self):
+        post_length = len(self.make_post())
+        urls_length = len(self.story_url)
         return post_length - urls_length + self.tco_length
 
 
