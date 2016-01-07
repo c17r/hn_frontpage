@@ -44,6 +44,12 @@ class Formatter(object):
             rtn = self.twitter_config['short_url_length_https']
         return rtn
 
+    @staticmethod
+    def get_formatter(story, hn_data, twitter_config):
+        if 'url' in hn_data:
+            return URLFormatter(story, hn_data, twitter_config)
+        return NonURLFormatter(story, hn_data, twitter_config)
+
 
 class URLFormatter(Formatter):
     def make_post(self):
@@ -92,11 +98,7 @@ class HackerNewsFrontPage(FireBaseStreamingProcessBase):
 
     def _format_tweet(self, story, hn_data):
         config = self.twitter.twitter_config
-        if 'url' in hn_data:
-            formatter = URLFormatter(story, hn_data, config)
-        else:
-            formatter = NonURLFormatter(story, hn_data, config)
-
+        formatter = Formatter.get_formatter(story, hn_data, config)
         post = formatter()
         title_length = 140 - len(formatter)
         if len(hn_data['title']) <= title_length:
