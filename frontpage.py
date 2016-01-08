@@ -80,7 +80,7 @@ class NonURLFormatter(Formatter):
 
 class JobURLFormatter(Formatter):
     def make_post(self):
-        return "L: %s" % self.story_url
+        return "\nL: %s" % self.story_url
 
     def __len__(self):
         post_length = len(self.make_post())
