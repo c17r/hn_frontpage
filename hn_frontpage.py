@@ -38,7 +38,7 @@ def main():
             _logger.info("Shutdown signal received, stopping..")
             return
         except Exception as e:
-            _logger.error("Exception: " + str(e))
+            _logger.exception("Exception: " + str(e))
 
 
 parser = argparse.ArgumentParser()
