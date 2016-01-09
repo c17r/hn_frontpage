@@ -2,7 +2,7 @@ from datetime import datetime
 from fabric.api import task, env, settings, cd, sudo, run, local, put, path
 
 stamp = datetime.now().strftime("v%Y%m%d%H%M%S")
-stamptar = "ttt-" + stamp + ".tar"
+stamptar = "hnfp-" + stamp + ".tar"
 stampzip = stamptar + ".gz"
 
 env.stamp = stamp
