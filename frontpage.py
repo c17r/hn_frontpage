@@ -139,7 +139,7 @@ class HackerNewsFrontPage(FireBaseStreamingProcessBase):
 
     def process(self, event):
 
-        for hn_id in event['data'].itervalues():
+        for hn_id in event['data']:
 
             story, _ = db.Story.get_or_create(hn_id=hn_id)
             self._update_story(story)
