@@ -16,18 +16,30 @@ class FirebaseStreamingEvents(object):
     def __init__(self, process_object):
         self.process_object = process_object
 
+    def _create_requests(self):
+        self.request = requests.get(
+            self.process_object.url,
+            stream=True,
+            headers={
+                'Accept': 'text/event-stream',
+            }
+        )
+
+    def _get_data(self):
+        while True:
+            try:
+                for line in self.request.iter_lines():
+                    yield line
+            except requests.exceptions.RequestException as e:
+                _logger.exception()
+                self._create_requests()
+
     def run(self):
         if self.request is None:
-            self.request = requests.get(
-                self.process_object.url,
-                stream=True,
-                headers={
-                    'Accept': 'text/event-stream',
-                }
-            )
+            self._create_requests()
 
         event = {}
-        for line in self.request.iter_lines():
+        for line in self._get_data():
             if not line:
                 continue
             if line[:6] == 'event:':
