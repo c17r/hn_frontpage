@@ -46,7 +46,7 @@ class Formatter(object):
 
     @staticmethod
     def get_formatter(story, hn_data, twitter_config):
-        if 'type' in hn_data and hn_data['type'] == 'job':
+        if 'type' in hn_data and hn_data['type'] == 'job' and 'url' in hn_data:
             return JobURLFormatter(story, hn_data, twitter_config)
         if 'url' in hn_data:
             return URLFormatter(story, hn_data, twitter_config)
