@@ -71,6 +71,8 @@ parser.add_argument(
 if __name__ == "__main__":
     args = parser.parse_args()
 
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.basicConfig(
         filename=args.log_file,
         level=logging.INFO,
