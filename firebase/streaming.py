@@ -31,7 +31,7 @@ class FirebaseStreamingEvents(object):
                 for line in self.request.iter_lines():
                     yield line
             except requests.exceptions.RequestException as e:
-                _logger.exception()
+                _logger.exception("Exception: " + str(e))
                 self._create_requests()
 
     def run(self):
