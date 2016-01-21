@@ -59,3 +59,9 @@ def deploy():
 
         with cd('/home/hn_frontpage/run/current/src/'):
             sudo('./run.sh start')
+
+@task
+def clean():
+    with settings(sudo_user='hn_frontpage'):
+        with cd('/home/hn_frontpage/run'):
+            sudo('current=$(basename $(readlink -f current)) && previous=$(basename $(readlink -f previous)) && for dir in $(ls -dt */ | egrep -v "current|previous|$current|$previous"); do rm -r $dir; done')
