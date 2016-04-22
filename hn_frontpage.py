@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-import sys
+
 import json
 import logging
 import argparse
 
 import daemonocle
+import logbook
 
 from frontpage import HackerNewsFrontPage
 from firebase import FirebaseStreamingEvents
@@ -73,11 +74,16 @@ if __name__ == "__main__":
 
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
-    logging.basicConfig(
-        filename=args.log_file,
-        level=logging.INFO,
-        format="%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-    )
+
+    logbook.set_datetime_format("local")
+    logbook.compat.redirect_logging()
+    logbook.RotatingFileHandler(
+        args.log_file,
+        max_size=1024*1024*100,
+        backup_count=10,
+        level='INFO',
+        format_string=u"{record.time:%Y-%m-%d %H:%M:%S.%f} : {record.level_name} : {record.channel} : {record.message}",
+    ).push_application()
 
     if args.action != 'cli':
         daemon = daemonocle.Daemon(
