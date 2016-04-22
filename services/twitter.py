@@ -98,7 +98,11 @@ class Twitter(object):
     def post_status(self, status):
         self._verify_configured()
 
-        self.twitter.statuses.update(status=status)
+        try:
+            self.twitter.statuses.update(status=status)
+        except Exception as e:
+            _logger.exception(str(e) + '>' + status + '<')
+            raise
 
     def post_reply(self, message, status):
         return self.post_reply(
