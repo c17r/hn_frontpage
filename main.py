@@ -7,7 +7,7 @@ import argparse
 import daemonocle
 import logbook
 
-from frontpage import HackerNewsFrontPage
+from frontpage.frontpage import HackerNewsFrontPage
 from firebase import FirebaseStreamingEvents
 from services import Twitter
 
