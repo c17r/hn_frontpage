@@ -21,9 +21,9 @@ def deploy():
 
     local('tar cf %(stamptar)s _requirements/' % env)
     local('tar rf %(stamptar)s firebase/' % env)
+    local('tar rf %(stamptar)s frontpage/' % env)
     local('tar rf %(stamptar)s services/' % env)
-    local('tar rf %(stamptar)s frontpage.py' % env)
-    local('tar rf %(stamptar)s hn_frontpage.py' % env)
+    local('tar rf %(stamptar)s main.py' % env)
     local('tar rf %(stamptar)s run.sh' % env)
     local('gzip %(stamptar)s' % env)
 
