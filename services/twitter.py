@@ -20,7 +20,7 @@ class TwitterNetworkException(Exception):
     pass
 
 
-class Twitter(object):
+class TwitterBase(object):
 
     def __init__(self, token, token_secret, consumer_key, consumer_secret):
         self.token = token
@@ -33,6 +33,45 @@ class Twitter(object):
         self.config = None
         self.config_expires = None
 
+    @property
+    def twitter_config(self):
+        raise NotImplemented('Base Class')
+
+    def user_stream(self, see_nontweet_messages=False):
+        raise NotImplemented('Base Class')
+
+    def post_status(self, status):
+        raise NotImplemented('Base Class')
+
+    def post_reply(self, message, status):
+        raise NotImplemented('Base Class')
+
+    def post_reply(self, tweet_id, reply_to, status):
+        raise NotImplemented('Base Class')
+
+
+class TestTwitter(TwitterBase):
+
+    @property
+    def twitter_config(self):
+        return {
+            'short_url_length': 24,
+            'short_url_length_https': 24
+        }
+
+    def post_status(self, status):
+        print "Posting to Twitter:"
+        print status
+        print "---"
+
+
+class Twitter(TwitterBase):
+
+    def __init__(self, token, token_secret, consumer_key, consumer_secret):
+        super(Twitter, self).__init__(token,
+                                      token_secret,
+                                      consumer_key,
+                                      consumer_secret)
         self._verify_credentials()
 
     def _verify_credentials(self):
@@ -122,3 +161,5 @@ class Twitter(object):
             in_reply_to_status_id=tweet_id,
             status=status
         )
+
+
