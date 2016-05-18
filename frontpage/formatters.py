@@ -35,7 +35,7 @@ class Formatter(object):
 
     @staticmethod
     def get_formatter(story, hn_data, twitter_config):
-        if 'type' in hn_data and hn_data['type'] == 'job' and 'url' in hn_data:
+        if 'type' in hn_data and hn_data['type'] == 'job':
             return JobURLFormatter(story, hn_data, twitter_config)
         if 'url' in hn_data:
             return URLFormatter(story, hn_data, twitter_config)
@@ -68,6 +68,16 @@ class NonURLFormatter(Formatter):
 
 
 class JobURLFormatter(Formatter):
+
+    @property
+    def story_url(self):
+        # Job posts can be either to an external job site..OR..a special HN
+        # item that has no comments.  Handle both cases.
+        try:
+            return super(JobURLFormatter, self).story_url
+        except:
+            return self.hn_url
+
     def make_post(self):
         return "\nJ: %s" % self.story_url
 
