@@ -1,8 +1,11 @@
+import re
+
 
 class Formatter(object):
     story = None
     hn_data = None
     twitter_config = None
+    valid_chars = re.compile(r"[^A-Za-z0-9\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]")
 
     def __init__(self, story, hn_data, twitter_config):
         self.story = story
@@ -15,6 +18,9 @@ class Formatter(object):
     def __len__(self):
         raise NotImplemented('Base Class')
 
+    def _clean_url(self, url):
+        return ''.join(self.valid_chars.split(url))
+
     def make_post(self):
         raise NotImplemented('Base Class')
 
@@ -24,7 +30,7 @@ class Formatter(object):
 
     @property
     def story_url(self):
-        return self.hn_data['url']
+        return self._clean_url(self.hn_data['url'])
 
     @property
     def tco_length(self):
