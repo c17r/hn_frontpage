@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-/home/hn_frontpage/run/current/venv/bin/python \
-    /home/hn_frontpage/run/current/src/main.py \
-    $1 \
-    --pid-file /home/hn_frontpage/run/hnfp.pid \
-    --log-file /home/hn_frontpage/run/hnfp.log \
-    --db-file /home/hn_frontpage/run/hnfp_storage.db \
-    --config-file /home/hn_frontpage/run/secrets.json
+RUN=$PWD/run
+CURRENT=$RUN/current
+
+PIDFILE=$RUN/hnfp.pid
+LOGFILE=$RUN/hnfp.log
+DBFILE=$RUN/hnfp_storage.db
+CONFIGFILE=$RUN/secrets.json
+
+source $CURRENT/venv/bin/activate
+
+python $CURRENT/src/main.py $1 --pid-file $PIDFILE --log-file $LOGFILE --db-file $DBFILE --config-file $CONFIGFILE
