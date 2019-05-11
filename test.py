@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import os
+import logbook
+import sys
 
 from main import get_config
 from frontpage.frontpage import HackerNewsFrontPage
@@ -25,4 +27,7 @@ def main():
         print("Shutting down")
 
 if __name__ == '__main__':
+    logbook.set_datetime_format("local")
+    logbook.compat.redirect_logging()
+    logbook.StreamHandler(sys.stdout).push_application()
     main()
