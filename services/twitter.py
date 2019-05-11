@@ -1,6 +1,6 @@
-from __future__ import absolute_import
 import datetime
 import logging
+from abc import ABC
 
 import twitter as api
 
@@ -20,7 +20,7 @@ class TwitterNetworkException(Exception):
     pass
 
 
-class TwitterBase(object):
+class TwitterBase(ABC):
 
     def __init__(self, token, token_secret, consumer_key, consumer_secret):
         self.token = token
@@ -60,9 +60,9 @@ class TestTwitter(TwitterBase):
         }
 
     def post_status(self, status):
-        print "Posting to Twitter:"
-        print status
-        print "---"
+        print("Posting to Twitter:")
+        print(status)
+        print("---")
 
 
 class Twitter(TwitterBase):

@@ -1,4 +1,4 @@
-from streaming import (
+from .streaming import (
     FirebaseStreamingEvents,
     FireBaseStreamingProcessBase
 )

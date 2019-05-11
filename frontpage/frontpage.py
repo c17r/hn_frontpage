@@ -5,7 +5,7 @@ import requests
 
 import services.storage as db
 from firebase import FireBaseStreamingProcessBase
-from formatters import Formatter
+from .formatters import Formatter
 
 
 _logger = logging.getLogger(__name__)

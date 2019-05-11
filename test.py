@@ -11,7 +11,7 @@ DB_FILENAME = 'hnfp_storage.db'
 
 def main():
     if os.path.isfile(DB_FILENAME):
-        print "remove existing DB"
+        print("remove existing DB")
         os.remove(DB_FILENAME)
 
     config = get_config('secrets.json')
@@ -22,7 +22,7 @@ def main():
     try:
         firebase.run()
     except KeyboardInterrupt:
-        print "Shutting down"
+        print("Shutting down")
 
 if __name__ == '__main__':
     main()

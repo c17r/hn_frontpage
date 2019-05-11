@@ -1,5 +1,6 @@
 import json
 import logging
+from abc import ABC
 
 import requests
 
@@ -40,6 +41,8 @@ class FirebaseStreamingEvents(object):
 
         event = {}
         for line in self._get_data():
+            line = line.decode('utf-8')
+            _logger.debug('Data from server: ' + str(line))
             if not line:
                 continue
             if line[:6] == 'event:':
@@ -60,7 +63,7 @@ class FirebaseStreamingEvents(object):
         return self.process_object.process(json.loads(event['data']))
 
 
-class FireBaseStreamingProcessBase(object):
+class FireBaseStreamingProcessBase(ABC):
     url = None
     raw_events = False
 
