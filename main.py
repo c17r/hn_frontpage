@@ -23,6 +23,7 @@ env = environ.Env(
     HNFP_CONSUMER_KEY=(str, ''),
     HNFP_CONSUMER_SECRET=(str, ''),
     HNFP_DEBUG=(bool, False),
+    HNFP_DEBUG_CLEAR_DB=(bool, True),
     HNFP_DB_FILE=(str, '')
 )
 environ.Env.read_env()
@@ -41,7 +42,7 @@ def set_prod():
 
 def set_debug():
     logbook.StreamHandler(sys.stdout).push_application()
-    if os.path.isfile(env('HNFP_DB_FILE')):
+    if os.path.isfile(env('HNFP_DB_FILE')) and env('HNFP_DEBUG_CLEAR_DB'):
         _logger.info('removing existing DB')
         os.remove(env('HNFP_DB_FILE'))
     return TestTwitter
