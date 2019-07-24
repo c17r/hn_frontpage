@@ -1,5 +1,5 @@
-daemonocle
 peewee
 requests
 twitter
 logbook
+django-environ

@@ -2,34 +2,68 @@
 
 import json
 import logging
-import argparse
+import os
+import sys
 
-import daemonocle
+import environ
 import logbook
 
 from frontpage.frontpage import HackerNewsFrontPage
 from firebase import FirebaseStreamingEvents
 from services import Twitter
+from services.twitter import TestTwitter
 
 
 _logger = logging.getLogger(__name__)
 
 
-def get_config(path):
-    with open(path, "r") as f:
-        raw = f.read()
-    return json.loads(raw)
+env = environ.Env(
+    HNFP_TOKEN=(str, ''),
+    HNFP_TOKEN_SECRET=(str, ''),
+    HNFP_CONSUMER_KEY=(str, ''),
+    HNFP_CONSUMER_SECRET=(str, ''),
+    HNFP_DEBUG=(bool, False),
+    HNFP_DB_FILE=(str, '')
+)
+environ.Env.read_env()
 
 
-def cb_shutdown(message, code):
-    _logger.info("Shutdown signal triggered: %s - %s", code, message)
+def set_prod():
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    logbook.StreamHandler(
+        sys.stdout,
+        level='INFO',
+        format_string=u"{record.time:%Y-%m-%d %H:%M:%S.%f} : {record.level_name} : {record.channel} : {record.message}"
+    ).push_application()
+    return Twitter
+
+
+def set_debug():
+    logbook.StreamHandler(sys.stdout).push_application()
+    if os.path.isfile(env('HNFP_DB_FILE')):
+        _logger.info('removing existing DB')
+        os.remove(env('HNFP_DB_FILE'))
+    return TestTwitter
 
 
 def main():
-    args = parser.parse_args()
-    config = get_config(args.config_file)
-    twitter = Twitter(**config)
-    hackernews_frontpage = HackerNewsFrontPage(args.db_file, twitter)
+    logbook.set_datetime_format("local")
+    logbook.compat.redirect_logging()
+
+    if not env('HNFP_DEBUG'):
+        klass = set_prod()
+    else:
+        klass = set_debug()
+
+    config = {
+        'token': env('HNFP_TOKEN'),
+        'token_secret': env('HNFP_TOKEN_SECRET'),
+        'consumer_key': env('HNFP_CONSUMER_KEY'),
+        'consumer_secret': env('HNFP_CONSUMER_SECRET'),
+    }
+    twitter = klass(**config)
+    hackernews_frontpage = HackerNewsFrontPage(env('HNFP_DB_FILE'), twitter)
     firebase = FirebaseStreamingEvents(hackernews_frontpage)
 
     while True:
@@ -42,56 +76,6 @@ def main():
             _logger.exception("Exception: " + str(e))
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    'action',
-    type=str,
-    choices=['start', 'stop', 'restart', 'status', 'cli'],
-)
-parser.add_argument(
-    '--pid-file',
-    type=str,
-    default='./hnfp.pid',
-)
-parser.add_argument(
-    '--log-file',
-    type=str,
-    default='./hnfp.log',
-)
-parser.add_argument(
-    '--db-file',
-    type=str,
-    default='./hnfp_storage.db'
-)
-parser.add_argument(
-    '--config-file',
-    type=str,
-    default='./secrets.json'
-)
-
 if __name__ == "__main__":
-    args = parser.parse_args()
-
-    logging.getLogger("requests").setLevel(logging.WARNING)
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
-
-    logbook.set_datetime_format("local")
-    logbook.compat.redirect_logging()
-    logbook.RotatingFileHandler(
-        args.log_file,
-        max_size=1024*1024*100,
-        backup_count=10,
-        level='INFO',
-        format_string=u"{record.time:%Y-%m-%d %H:%M:%S.%f} : {record.level_name} : {record.channel} : {record.message}",
-    ).push_application()
-
-    if args.action != 'cli':
-        daemon = daemonocle.Daemon(
-            worker=main,
-            shutdown_callback=cb_shutdown,
-            pidfile=args.pid_file,
-            workdir="."
-        )
-        daemon.do_action(args.action)
-    else:
-        main()
+    logging.getLogger("environ.environ").setLevel(logging.WARNING)
+    main()
