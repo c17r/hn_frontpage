@@ -4,13 +4,11 @@ import re
 class Formatter(object):
     story = None
     hn_data = None
-    twitter_config = None
     valid_chars = re.compile(r"[^A-Za-z0-9\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]")
 
-    def __init__(self, story, hn_data, twitter_config):
+    def __init__(self, story, hn_data):
         self.story = story
         self.hn_data = hn_data
-        self.twitter_config = twitter_config
 
     def __call__(self, *args, **kwargs):
         return self.make_post()
@@ -34,18 +32,15 @@ class Formatter(object):
 
     @property
     def tco_length(self):
-        rtn = self.twitter_config['short_url_length']
-        if self.twitter_config['short_url_length_https'] > rtn:
-            rtn = self.twitter_config['short_url_length_https']
-        return rtn
+        return 23 # used to come from help/configuration but they retired the API
 
     @staticmethod
-    def get_formatter(story, hn_data, twitter_config):
+    def get_formatter(story, hn_data):
         if 'type' in hn_data and hn_data['type'] == 'job':
-            return JobURLFormatter(story, hn_data, twitter_config)
+            return JobURLFormatter(story, hn_data)
         if 'url' in hn_data:
-            return URLFormatter(story, hn_data, twitter_config)
-        return NonURLFormatter(story, hn_data, twitter_config)
+            return URLFormatter(story, hn_data)
+        return NonURLFormatter(story, hn_data)
 
 
 class URLFormatter(Formatter):

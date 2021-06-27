@@ -32,8 +32,7 @@ class HackerNewsFrontPage(FireBaseStreamingProcessBase):
         _logger.info("Posting " + hn_data['title'])
 
     def _format_tweet(self, story, hn_data):
-        config = self.twitter.twitter_config
-        formatter = Formatter.get_formatter(story, hn_data, config)
+        formatter = Formatter.get_formatter(story, hn_data)
         post = formatter()
         title_length = 140 - len(formatter)
         if len(hn_data['title']) <= title_length:
