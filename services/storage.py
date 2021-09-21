@@ -34,3 +34,4 @@ class Story(BaseModel):
     first_saw = peewee.DateField(default=_today)
     last_saw = peewee.DateField(default=_today)
     times = peewee.IntegerField(default=1)
+    position = peewee.IntegerField(default=0)

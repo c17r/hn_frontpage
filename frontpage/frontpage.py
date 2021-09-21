@@ -51,20 +51,25 @@ class HackerNewsFrontPage(FireBaseStreamingProcessBase):
     def _is_ready_to_post(self, story):
         return story.next_post < self._today()
 
-    def _update_story(self, story):
+    def _update_story(self, story, position):
         if story.last_saw < self._today():
             story.times += 1
         story.last_saw = self._today()
+
+        # 0 means we've never seen it
+        # less than since we want to record how close they come to #1
+        if story.position == 0 or position < story.position:
+            story.position = position
 
     def _set_next_post(self, story):
         story.next_post = self._tomorrow()
 
     def process(self, event):
 
-        for hn_id in event['data']:
+        for position, hn_id in enumerate(event['data'], start=1):
 
             story, _ = db.Story.get_or_create(hn_id=hn_id)
-            self._update_story(story)
+            self._update_story(story, position)
             if self._is_ready_to_post(story):
                 self._post_to_twitter(story)
                 self._set_next_post(story)
