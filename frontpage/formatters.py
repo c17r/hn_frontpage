@@ -36,11 +36,14 @@ class Formatter(object):
 
     @staticmethod
     def get_formatter(story, hn_data):
-        if 'type' in hn_data and hn_data['type'] == 'job':
-            return JobURLFormatter(story, hn_data)
-        if 'url' in hn_data:
-            return URLFormatter(story, hn_data)
-        return NonURLFormatter(story, hn_data)
+        try:
+            if 'type' in hn_data and hn_data['type'] == 'job':
+                return JobURLFormatter(story, hn_data)
+            if 'url' in hn_data:
+                return URLFormatter(story, hn_data)
+            return NonURLFormatter(story, hn_data)
+        except TypeError as e:
+            raise TypeError(f"hn_data = {hn_data}, story = {story}") from e
 
 
 class URLFormatter(Formatter):
