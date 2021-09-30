@@ -5,7 +5,9 @@
 #    pip-compile --output-file=_requirements/dev.txt _requirements/dev.in _requirements/prod.in
 #
 certifi==2021.5.30
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk
 charset-normalizer==2.0.6
     # via requests
 django-environ==0.7.0
@@ -18,7 +20,11 @@ peewee==3.14.4
     # via -r _requirements/prod.in
 requests==2.26.0
     # via -r _requirements/prod.in
+sentry-sdk==1.4.3
+    # via -r _requirements/prod.in
 twitter==1.19.3
     # via -r _requirements/prod.in
 urllib3==1.26.6
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk

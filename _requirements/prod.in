@@ -3,3 +3,4 @@ requests
 twitter
 logbook
 django-environ
+sentry-sdk

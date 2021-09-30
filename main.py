@@ -9,6 +9,7 @@ from abc import ABC
 
 import environ
 import logbook
+import sentry_sdk
 
 from frontpage.frontpage import HackerNewsFrontPage
 from firebase import FirebaseStreamingEvents
@@ -26,7 +27,8 @@ env = environ.Env(
     HNFP_CONSUMER_SECRET=(str, ''),
     HNFP_DEBUG=(bool, False),
     HNFP_DEBUG_CLEAR_DB=(bool, True),
-    HNFP_DB_FILE=(str, '')
+    HNFP_DB_FILE=(str, ''),
+    HNFP_SENTRYIO_URL=(str, '')
 )
 environ.Env.read_env()
 
@@ -44,6 +46,7 @@ class Settings(ABC):
 
 class ProdSettings(Settings):
     def setup(self):
+        sentry_sdk.init(env('HNFP_SENTRYIO_URL'), traces_sample_rate=0.0)
         logging.getLogger("requests").setLevel(logging.WARNING)
         logging.getLogger("urllib3").setLevel(logging.WARNING)
         logbook.StreamHandler(
@@ -56,7 +59,7 @@ class ProdSettings(Settings):
         return Twitter
 
     def report_exception(self, exc):
-        pass
+        sentry_sdk.capture_exception(exc)
 
 
 class DevSettings(Settings):
