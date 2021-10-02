@@ -1,5 +1,6 @@
 import datetime
 import logging
+import time
 
 import requests
 
@@ -11,6 +12,10 @@ from .formatters import Formatter
 _logger = logging.getLogger(__name__)
 
 
+class HackerNewsEmptyDataException(Exception):
+    pass
+
+
 class HackerNewsFrontPage(FireBaseStreamingProcessBase):
     url = 'https://hacker-news.firebaseio.com/v0/topstories.json?orderBy=%22$key%22&limitToFirst=30'
     twitter = None
@@ -20,13 +25,22 @@ class HackerNewsFrontPage(FireBaseStreamingProcessBase):
         self.twitter = twitter
 
     def _get_hn_data(self, hn_id):
-        title_url = 'https://hacker-news.firebaseio.com/v0/item/%s.json' % hn_id
-        r = requests.get(title_url)
-        r.raise_for_status()
-        return r.json()
+        times = 0
+        while times < 5:
+            times += 1
+            title_url = 'https://hacker-news.firebaseio.com/v0/item/%s.json' % hn_id
+            r = requests.get(title_url)
+            r.raise_for_status()
+            rv = r.json()
+            if rv is not None:
+                return rv
+            time.sleep(1.0)
+        return None
 
     def _post_to_twitter(self, story):
         hn_data = self._get_hn_data(story.hn_id)
+        if (hn_data is None):
+            raise HackerNewsEmptyDataException(story.hn_id)
         tweet = self._format_tweet(story, hn_data)
         self.twitter.post_status(tweet)
         _logger.info("Posting " + hn_data['title'])
