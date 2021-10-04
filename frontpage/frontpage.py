@@ -52,7 +52,7 @@ class HackerNewsFrontPage(FireBaseStreamingProcessBase):
         if len(hn_data['title']) <= title_length:
             post = hn_data['title'] + post
         else:
-            post = hn_data['title'][:(title_length - 1)] + unichr(8230) + post
+            post = hn_data['title'][:(title_length - 1)] + chr(8230) + post
 
         return post
 
