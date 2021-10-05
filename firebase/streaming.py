@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import time
 from abc import ABC
 
 import requests
@@ -29,12 +30,17 @@ class FirebaseStreamingEvents(object):
         )
 
     def _get_data(self):
+        times = 0
         while True:
             try:
                 for line in self.request.iter_lines(chunk_size=1, delimiter=b'\n\n'):
+                    times = 0
                     yield line
             except requests.exceptions.RequestException as e:
-                _logger.exception("Exception: " + str(e))
+                times += 1
+                if times > 5:
+                    raise
+                time.sleep(1.0)
                 self._create_requests()
 
     def run(self):
