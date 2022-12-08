@@ -4,26 +4,26 @@
 #
 #    pip-compile --output-file=_requirements/prod.txt _requirements/prod.in
 #
-certifi==2021.5.30
+certifi==2022.12.7
     # via
     #   requests
     #   sentry-sdk
 charset-normalizer==2.0.6
     # via requests
 django-environ==0.7.0
-    # via -r _requirements/prod.in
+    # via -r prod.in
 idna==3.2
     # via requests
 logbook==1.5.3
-    # via -r _requirements/prod.in
+    # via -r prod.in
 peewee==3.14.4
-    # via -r _requirements/prod.in
+    # via -r prod.in
 requests==2.26.0
-    # via -r _requirements/prod.in
+    # via -r prod.in
 sentry-sdk==1.4.3
-    # via -r _requirements/prod.in
+    # via -r prod.in
 twitter==1.19.3
-    # via -r _requirements/prod.in
+    # via -r prod.in
 urllib3==1.26.6
     # via
     #   requests
